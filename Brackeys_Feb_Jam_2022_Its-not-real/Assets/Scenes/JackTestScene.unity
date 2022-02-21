@@ -261,30 +261,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrampolineParent
       objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: oldVelocityInfluence
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: pointsVector2.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: pointsVector2.Array.data[1].x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: pointsVector2.Array.data[1].y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: pointsVector2.Array.data[2].x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6204448322933196178, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: pointsVector2.Array.data[2].y
-      value: -1
-      objectReference: {fileID: 0}
     - target: {fileID: 8039682572054452192, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -328,10 +304,6 @@ PrefabInstance:
     - target: {fileID: 8039682572054452192, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8363897407452584371, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7734a0bba23ba8f4ba3bd8334da93bc0, type: 3}
