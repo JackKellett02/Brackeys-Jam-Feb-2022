@@ -6,45 +6,48 @@ using UnityEngine;
 public class TrampolineControllerScript : MonoBehaviour {
 	#region Variables to assign via the unity inspector (SerializeFields).
 	[SerializeField]
-	[Range(0.1f, 1.0f)]
-	private float launchDelay = 0.25f;
+	private float launchSpeed = 10.0f;
+
+	[SerializeField]
+	[Range(0.0f, 1.0f)]
+	private float oldVelocityInfluence = 0.0f;
 
 	[SerializeField]
 	private Vector2[] pointsVector2;
-	
+
 	[SerializeField]
 	private GameObject normalTest = null;
 	#endregion
 
 	#region Private Variable Declarations.
-	private float timeInTrampoline = 0.0f;
-	private Rigidbody2D rigidbodyToLaunch = null;
 	private LineRenderer trampolineLineRenderer;
+	private EdgeCollider2D trampolineCollider;
+
+	private Vector2 trampolineNormal = Vector2.zero;
 
 	#endregion
 
 	#region Private Functions.
 	// Start is called before the first frame update
 	void Start() {
+		//Get the collider and line renderer.
+		trampolineCollider = gameObject.GetComponent<EdgeCollider2D>();
 		trampolineLineRenderer = gameObject.GetComponent<LineRenderer>();
+
+		//Update the line.
 		UpdateLinePoints();
+		//Calculate The Normal Vector for the trampoline.
+		trampolineNormal = CalculateTrampolineNormal();
 	}
 
 	// Update is called once per frame
 	void Update() {
-		if (timeInTrampoline >= launchDelay) {
-			timeInTrampoline = 0.0f;
-			LaunchCollision();
-		}
-
+		//Update the line.
 		UpdateLinePoints();
-		Vector2 normal = CalculateTrampolineNormal();
-		Debug.Log(normal);
-		normalTest.transform.up = new Vector3(normal.x, normal.y, 0.0f);
-	}
 
-	private void LaunchCollision() {
-
+		//Calculate The Normal Vector for the trampoline.
+		trampolineNormal = CalculateTrampolineNormal();
+		normalTest.transform.up = new Vector3(trampolineNormal.x, trampolineNormal.y, 0.0f);
 	}
 
 	private Vector2 CalculateTrampolineNormal() {
@@ -65,18 +68,41 @@ public class TrampolineControllerScript : MonoBehaviour {
 			returnNormal = returnNormal.normalized;
 		}
 
-		//Retturn it.
+		//Return it.
 		return returnNormal;
 	}
 
-	private void UpdateLinePoints()
-	{
+	private void UpdateLinePoints() {
+		//Add the points to the collider and line renderer.
+		trampolineCollider.points = pointsVector2;
 		trampolineLineRenderer.positionCount = pointsVector2.Length;
 		Debug.Log(pointsVector2.Length + " = points array length");
-		for (int i = 0; i < pointsVector2.Length; i++)
-		{
+		for (int i = 0; i < pointsVector2.Length; i++) {
 			trampolineLineRenderer.SetPosition(i, pointsVector2[i]);
 		}
+	}
+
+	private void LaunchCollision(Collider2D collision) {
+		//Get collision info needed to launch the object that has touched the trampoline.
+		Rigidbody2D collisionRigidbody = collision.gameObject.GetComponent<Rigidbody2D>();
+		Vector2 colliderVelocity = collisionRigidbody.velocity;
+
+		//Check what direction the collider is travelling and compare that
+		//to the normal of the trampoline to make sure the collider is launched
+		//in the correct direction.
+		Vector2 launchNormal = trampolineNormal;
+		float dotProduct = Vector2.Dot(colliderVelocity, launchNormal);
+
+		//If the dot product is positive that means the normal is in the same direction as the
+		//velocity so we need to flip it around for the player to be launched by the trampoline.
+		if (dotProduct > 0.0f) {
+			launchNormal = -launchNormal;
+		}
+
+		//Once we have the direction, launch the collider in that direction.
+		Vector2 launchVelocity = launchNormal * launchSpeed + colliderVelocity * oldVelocityInfluence;
+		launchVelocity = launchVelocity.normalized;
+		collisionRigidbody.velocity = launchVelocity * launchSpeed;
 	}
 	#endregion
 
@@ -86,19 +112,12 @@ public class TrampolineControllerScript : MonoBehaviour {
 		//Check the collider is valid.
 		Rigidbody2D colliderRigidbody2D = other.GetComponent<Rigidbody2D>();
 		if (colliderRigidbody2D) {
-			rigidbodyToLaunch = colliderRigidbody2D;
+			LaunchCollision(other);
 		}
 	}
 
 	private void OnTriggerStay2D(Collider2D other) {
-		//Check the collider is valid.
-		Rigidbody2D colliderRigidbody2D = other.GetComponent<Rigidbody2D>();
-		if (colliderRigidbody2D) {
-			if (colliderRigidbody2D == rigidbodyToLaunch) {
-				//Add to timer.
-				timeInTrampoline += Time.deltaTime;
-			}
-		}
+
 	}
 
 	private void OnTriggerExit2D(Collider2D other) {
