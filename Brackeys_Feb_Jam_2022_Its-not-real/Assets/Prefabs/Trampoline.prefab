@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96af76b7bb22cd64ab294a49ef23fe94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchSpeed: 5
+  launchSpeed: 15
   oldVelocityInfluence: 0.25
 --- !u!68 &16397218119217720
 EdgeCollider2D:
