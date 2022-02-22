@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -11,12 +12,6 @@ public class TrampolineControllerScript : MonoBehaviour {
 	[SerializeField]
 	[Range(0.0f, 1.0f)]
 	private float oldVelocityInfluence = 0.0f;
-
-	[SerializeField]
-	private Vector2[] pointsVector2;
-
-	[SerializeField]
-	private GameObject normalTest = null;
 	#endregion
 
 	#region Private Variable Declarations.
@@ -24,30 +19,20 @@ public class TrampolineControllerScript : MonoBehaviour {
 	private EdgeCollider2D trampolineCollider;
 
 	private Vector2 trampolineNormal = Vector2.zero;
-
+	private Vector2[] pointsVector2;
 	#endregion
 
 	#region Private Functions.
 	// Start is called before the first frame update
-	void Start() {
+	void Awake() {
 		//Get the collider and line renderer.
 		trampolineCollider = gameObject.GetComponent<EdgeCollider2D>();
 		trampolineLineRenderer = gameObject.GetComponent<LineRenderer>();
-
-		//Update the line.
-		UpdateLinePoints();
-		//Calculate The Normal Vector for the trampoline.
-		trampolineNormal = CalculateTrampolineNormal();
 	}
 
 	// Update is called once per frame
 	void Update() {
-		//Update the line.
-		UpdateLinePoints();
 
-		//Calculate The Normal Vector for the trampoline.
-		trampolineNormal = CalculateTrampolineNormal();
-		normalTest.transform.up = new Vector3(trampolineNormal.x, trampolineNormal.y, 0.0f);
 	}
 
 	private Vector2 CalculateTrampolineNormal() {
@@ -74,12 +59,19 @@ public class TrampolineControllerScript : MonoBehaviour {
 
 	private void UpdateLinePoints() {
 		//Add the points to the collider and line renderer.
-		trampolineCollider.points = pointsVector2;
+		List<Vector2> tempList = new List<Vector2>();
+		for (int i = 0; i < pointsVector2.Length; i++)
+		{
+			tempList.Add(pointsVector2[i]);
+		}
+		trampolineCollider.SetPoints(tempList);
 		trampolineLineRenderer.positionCount = pointsVector2.Length;
-		Debug.Log(pointsVector2.Length + " = points array length");
 		for (int i = 0; i < pointsVector2.Length; i++) {
 			trampolineLineRenderer.SetPosition(i, pointsVector2[i]);
 		}
+
+		//Calculate Normal.
+		trampolineNormal = CalculateTrampolineNormal();
 	}
 
 	private void LaunchCollision(Collider2D collision) {
@@ -128,5 +120,28 @@ public class TrampolineControllerScript : MonoBehaviour {
 
 	#region Public Access Functions (Getters And Setters).
 
+	public void SetTrampolinePoints(Vector2 a_StartPoint, Vector2 a_EndPoint, int numberOfPoints) {
+		//Add the points to the trampoline.
+		pointsVector2 = new Vector2[numberOfPoints];
+		for (int i = 0; i < numberOfPoints; i++) {
+			//If it's the start or end of the array just set it to the start/endpoint.
+			if (i == 0) {
+				pointsVector2[i] = a_StartPoint;
+			} else if (i == (numberOfPoints - 1)) {
+				pointsVector2[i] = a_EndPoint;
+			} else {//Interpolate between the start and end point for the current item in the array.
+				float percentageAlongArray = ((float)(i + 1)) / ((float)(numberOfPoints));
+				Vector2 pointInSpace = new Vector2();
+				pointInSpace.x = Mathf.Lerp(a_StartPoint.x, a_EndPoint.x, percentageAlongArray);
+				pointInSpace.y = Mathf.Lerp(a_StartPoint.y, a_EndPoint.y, percentageAlongArray);
+
+				//Add it to the array.
+				pointsVector2[i] = pointInSpace;
+			}
+		}
+
+		//Update the line.
+		UpdateLinePoints();
+	}
 	#endregion
 }
