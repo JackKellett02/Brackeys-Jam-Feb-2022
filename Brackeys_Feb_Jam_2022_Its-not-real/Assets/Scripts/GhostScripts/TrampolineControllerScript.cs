@@ -12,6 +12,13 @@ public class TrampolineControllerScript : MonoBehaviour {
 	[SerializeField]
 	[Range(0.0f, 1.0f)]
 	private float oldVelocityInfluence = 0.0f;
+
+	[SerializeField]
+	[Range(0.01f, 1.0f)]
+	private float stretchTime = 0.25f;
+
+	[SerializeField]
+	private Transform centerPointTransform = null;
 	#endregion
 
 	#region Private Variable Declarations.
@@ -20,6 +27,15 @@ public class TrampolineControllerScript : MonoBehaviour {
 
 	private Vector2 trampolineNormal = Vector2.zero;
 	private Vector2[] pointsVector2;
+	private Vector2[] baseTrampolinePoints;
+	private Vector3 baseMidpointValue;
+	private int midpointint;
+	private Transform originalCenterPoint;
+
+	private bool trampolineCooldown = false;
+	private bool trampolineAnimating = false;
+	private float animationTimer = 0.0f;
+	private Vector2 m_launchNormal = Vector3.zero;
 	#endregion
 
 	#region Private Functions.
@@ -28,10 +44,103 @@ public class TrampolineControllerScript : MonoBehaviour {
 		//Get the collider and line renderer.
 		trampolineCollider = gameObject.GetComponent<EdgeCollider2D>();
 		trampolineLineRenderer = gameObject.GetComponent<LineRenderer>();
+		trampolineCooldown = false;
 	}
 
 	// Update is called once per frame
 	void Update() {
+		if (trampolineAnimating) {
+			if (animationTimer <= stretchTime) {
+				//Add to timer.
+				animationTimer += Time.deltaTime;
+
+				//Animate the trampoline.
+				AnimateTrampoline();
+				UpdateLinePoints();
+			} else {
+				trampolineAnimating = false;
+				trampolineCooldown = true;
+				StartCoroutine("TrampolineCooldownTimer");
+				animationTimer = 0.0f;
+				Debug.Log("Trampoline Animation Over");
+			}
+		} else {
+			centerPointTransform = originalCenterPoint;
+			//for (int i = 0; i < baseTrampolinePoints.Length; i++) {
+			//	pointsVector2[i] = new Vector2(baseTrampolinePoints[i].x, baseTrampolinePoints[i].y);
+			//}
+			UpdateLinePoints();
+		}
+	}
+
+	private void UpdateLinePoints() {
+		//Add the points to the collider and line renderer.
+		List<Vector2> tempList = new List<Vector2>();
+		for (int i = 0; i < pointsVector2.Length; i++) {
+			tempList.Add(pointsVector2[i]);
+		}
+		trampolineCollider.SetPoints(tempList);
+		trampolineLineRenderer.positionCount = pointsVector2.Length;
+		for (int i = 0; i < pointsVector2.Length; i++) {
+			trampolineLineRenderer.SetPosition(i, pointsVector2[i]);
+		}
+	}
+
+	private void LaunchCollision(Collider2D collision) {
+		//Get collision info needed to launch the object that has touched the trampoline.
+		Rigidbody2D collisionRigidbody = collision.gameObject.GetComponent<Rigidbody2D>();
+		Vector2 colliderVelocity = collisionRigidbody.velocity;
+
+		//Check what direction the collider is travelling and compare that
+		//to the normal of the trampoline to make sure the collider is launched
+		//in the correct direction.
+		Vector2 launchNormal = trampolineNormal;
+		float dotProduct = Vector2.Dot(colliderVelocity, launchNormal);
+
+		//If the dot product is positive that means the normal is in the same direction as the
+		//velocity so we need to flip it around for the player to be launched by the trampoline.
+		if (dotProduct > 0.0f) {
+			launchNormal = -launchNormal;
+		}
+
+		//Once we have the direction, launch the collider in that direction.
+		Vector2 launchVelocity = launchNormal * launchSpeed + colliderVelocity * oldVelocityInfluence;
+		launchVelocity = launchVelocity.normalized;
+		collision.gameObject.GetComponent<PlayerPlatformer>().TrampolineBounce(launchVelocity * launchSpeed, centerPointTransform, stretchTime);
+
+		//Animate the trampoline.
+		trampolineAnimating = true;
+		m_launchNormal = launchNormal;
+
+		//Set center points transform.up to the launch normal.
+		//centerPointTransform.up = new Vector3(launchNormal.x, launchNormal.y, 0.0f);
+	}
+
+	private void AnimateTrampoline() {
+		if (animationTimer < (stretchTime / 2.0f)) {
+			//Move center point in the opposite direction of the launch normal.
+			centerPointTransform.position += ((-(new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f))) * 5.0f * Time.deltaTime);
+		} else {
+			//Move center point in the direction of the launch normal.
+			centerPointTransform.position += ((new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f)) * 5.0f * Time.deltaTime);
+		}
+
+		//Bezier Calculation.
+		Vector2 point1 = pointsVector2[0];
+		Vector2 point2 = pointsVector2[pointsVector2.Length - 1];
+		Vector2 midPoint = new Vector2(centerPointTransform.position.x, centerPointTransform.position.y);
+
+		//Calculate Points
+		for (int i = 1; i < pointsVector2.Length - 1; i++) { //Interpolate between the start and end point for the current item in the array.
+			float percentageAlongArray = ((float)(i + 1)) / ((float)(pointsVector2.Length));
+
+			//Bezier Calculation.
+			Vector2 ab = Vector2.Lerp(point1, midPoint, percentageAlongArray);
+			Vector2 bc = Vector2.Lerp(midPoint, point2, percentageAlongArray);
+
+			//Update point in array.
+			pointsVector2[i] = Vector2.Lerp(ab, bc, percentageAlongArray);
+		}
 
 	}
 
@@ -57,54 +166,21 @@ public class TrampolineControllerScript : MonoBehaviour {
 		return returnNormal;
 	}
 
-	private void UpdateLinePoints() {
-		//Add the points to the collider and line renderer.
-		List<Vector2> tempList = new List<Vector2>();
-		for (int i = 0; i < pointsVector2.Length; i++)
-		{
-			tempList.Add(pointsVector2[i]);
-		}
-		trampolineCollider.SetPoints(tempList);
-		trampolineLineRenderer.positionCount = pointsVector2.Length;
-		for (int i = 0; i < pointsVector2.Length; i++) {
-			trampolineLineRenderer.SetPosition(i, pointsVector2[i]);
-		}
-
-		//Calculate Normal.
-		trampolineNormal = CalculateTrampolineNormal();
-	}
-
-	private void LaunchCollision(Collider2D collision) {
-		//Get collision info needed to launch the object that has touched the trampoline.
-		Rigidbody2D collisionRigidbody = collision.gameObject.GetComponent<Rigidbody2D>();
-		Vector2 colliderVelocity = collisionRigidbody.velocity;
-
-		//Check what direction the collider is travelling and compare that
-		//to the normal of the trampoline to make sure the collider is launched
-		//in the correct direction.
-		Vector2 launchNormal = trampolineNormal;
-		float dotProduct = Vector2.Dot(colliderVelocity, launchNormal);
-
-		//If the dot product is positive that means the normal is in the same direction as the
-		//velocity so we need to flip it around for the player to be launched by the trampoline.
-		if (dotProduct > 0.0f) {
-			launchNormal = -launchNormal;
-		}
-
-		//Once we have the direction, launch the collider in that direction.
-		Vector2 launchVelocity = launchNormal * launchSpeed + colliderVelocity * oldVelocityInfluence;
-		launchVelocity = launchVelocity.normalized;
-		collision.gameObject.GetComponent<PlayerPlatformer>().TrampolineBounce(launchVelocity * launchSpeed, transform, 1.0f);
+	private IEnumerator TrampolineCooldownTimer()
+	{
+		yield return new WaitForSeconds(stretchTime);
+		trampolineCooldown = false;
 	}
 	#endregion
 
-
 	#region Collider Trigger Functions
 	private void OnTriggerEnter2D(Collider2D other) {
-		//Check the collider is valid.
-		Rigidbody2D colliderRigidbody2D = other.GetComponent<Rigidbody2D>();
-		if (colliderRigidbody2D) {
-			LaunchCollision(other);
+		if (!trampolineCooldown) {
+			//Check the collider is valid.
+			Rigidbody2D colliderRigidbody2D = other.GetComponent<Rigidbody2D>();
+			if (colliderRigidbody2D) {
+				LaunchCollision(other);
+			}
 		}
 	}
 
@@ -122,6 +198,12 @@ public class TrampolineControllerScript : MonoBehaviour {
 
 	public void SetTrampolinePoints(Vector2 a_StartPoint, Vector2 a_EndPoint, int numberOfPoints) {
 		//Add the points to the trampoline.
+		if ((numberOfPoints % 2) == 0) {
+			//Make sure number of points is odd.
+			numberOfPoints++;
+		}
+
+		//Set up the points array.
 		pointsVector2 = new Vector2[numberOfPoints];
 		for (int i = 0; i < numberOfPoints; i++) {
 			//If it's the start or end of the array just set it to the start/endpoint.
@@ -140,8 +222,26 @@ public class TrampolineControllerScript : MonoBehaviour {
 			}
 		}
 
+		//Save the base points.
+		baseTrampolinePoints = new Vector2[pointsVector2.Length];
+
+		for (int i = 0; i < pointsVector2.Length; i++) {
+			baseTrampolinePoints[i] = new Vector2(pointsVector2[i].x, pointsVector2[i].y);
+		}
+
+		//Set base midpoint
+		float midpoint = ((numberOfPoints / 2) - 0.5f) + 1.0f;
+		int int_midpoint = (int)midpoint;
+		midpointint = int_midpoint;
+		baseMidpointValue = new Vector3(pointsVector2[midpointint].x, pointsVector2[midpointint].y, 0.0f);
+		centerPointTransform.position = baseMidpointValue;
+		originalCenterPoint = centerPointTransform;
+
 		//Update the line.
 		UpdateLinePoints();
+
+		//Calculate Normal.
+		trampolineNormal = CalculateTrampolineNormal();
 	}
 	#endregion
 }

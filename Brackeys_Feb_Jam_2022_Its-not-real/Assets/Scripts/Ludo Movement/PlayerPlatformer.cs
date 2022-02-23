@@ -122,7 +122,7 @@ public class PlayerPlatformer : MonoBehaviour
         if (stretching)
         {
             RB.velocity = Vector2.zero;
-            //transform.position = Vector3.Lerp(followLerp.position, transform.position, 0.9f);
+            transform.position = Vector3.Lerp(followLerp.position, transform.position, 0.9f);
         }
 
         
@@ -140,7 +140,7 @@ public class PlayerPlatformer : MonoBehaviour
         stretching = true;
         RB.gravityScale = 0;
         followLerp = followPoint;
-        Debug.Log(followPoint.position);
+        //Debug.Log(followPoint.position);
     }
 
     IEnumerator TrampolineStretch(Vector2 launchVelocity, float stretchTime)
