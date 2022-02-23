@@ -100,6 +100,7 @@ public class GhostManagerScript : MonoBehaviour
     {
         ghostModeActive = true;
         Time.timeScale = static_timeScale;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
     }
 
     /// <summary>
@@ -109,6 +110,7 @@ public class GhostManagerScript : MonoBehaviour
     {
         ghostModeActive = false;
         Time.timeScale = 1.0f;
+        Time.fixedDeltaTime = 0.02f;
     }
     #endregion
 }

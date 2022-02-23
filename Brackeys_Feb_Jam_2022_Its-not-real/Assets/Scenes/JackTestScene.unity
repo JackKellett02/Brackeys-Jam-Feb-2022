@@ -429,7 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostModeUiTint: {fileID: 929333060}
-  ghostModeTimeScale: 0
+  ghostModeTimeScale: 0.01
   trampolineResolution: 5
 --- !u!4 &1003518814
 Transform:
@@ -498,6 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0167a79b1fd43c44afe077b91ea6c39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canInput: 1
   jumpBufferValue: 0.15
   speed: 350
   jumpHeight: 8

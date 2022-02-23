@@ -94,7 +94,7 @@ public class TrampolineControllerScript : MonoBehaviour {
 		//Once we have the direction, launch the collider in that direction.
 		Vector2 launchVelocity = launchNormal * launchSpeed + colliderVelocity * oldVelocityInfluence;
 		launchVelocity = launchVelocity.normalized;
-		collisionRigidbody.velocity = launchVelocity * launchSpeed;
+		collision.gameObject.GetComponent<PlayerPlatformer>().TrampolineBounce(launchVelocity * launchSpeed, transform, 1.0f);
 	}
 	#endregion
 
