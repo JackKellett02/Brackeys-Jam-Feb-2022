@@ -18,6 +18,10 @@ public class TrampolineControllerScript : MonoBehaviour {
 	private float stretchTime = 0.25f;
 
 	[SerializeField]
+	[Range(1.0f, 10.0f)]
+	private float stretchCooldownMultiplier = 2.0f;
+
+	[SerializeField]
 	[Range(1.0f, 30.0f)]
 	private float stretchLength = 10.0f;
 
@@ -49,19 +53,20 @@ public class TrampolineControllerScript : MonoBehaviour {
 		trampolineCollider = gameObject.GetComponent<EdgeCollider2D>();
 		trampolineLineRenderer = gameObject.GetComponent<LineRenderer>();
 		trampolineCooldown = false;
+		StopCoroutine("TrampolineCooldownTimer");
 	}
 
 	// Update is called once per frame
 	void Update() {
 		if (trampolineAnimating) {
-			if (animationTimer <= stretchTime) {
+			if (animationTimer < stretchTime) {
 				//Add to timer.
 				animationTimer += Time.deltaTime;
 
 				//Animate the trampoline.
 				AnimateTrampoline();
 				UpdateLinePoints();
-			} else {
+			} else if(animationTimer >= stretchTime){
 				trampolineAnimating = false;
 				trampolineCooldown = true;
 				StartCoroutine("TrampolineCooldownTimer");
@@ -70,9 +75,9 @@ public class TrampolineControllerScript : MonoBehaviour {
 			}
 		} else {
 			centerPointTransform = originalCenterPoint;
-			//for (int i = 0; i < baseTrampolinePoints.Length; i++) {
-			//	pointsVector2[i] = new Vector2(baseTrampolinePoints[i].x, baseTrampolinePoints[i].y);
-			//}
+			for (int i = 0; i < baseTrampolinePoints.Length; i++) {
+				pointsVector2[i] = new Vector2(baseTrampolinePoints[i].x, baseTrampolinePoints[i].y);
+			}
 			UpdateLinePoints();
 		}
 	}
@@ -115,6 +120,7 @@ public class TrampolineControllerScript : MonoBehaviour {
 		//Animate the trampoline.
 		trampolineAnimating = true;
 		m_launchNormal = launchNormal;
+		animationTimer = 0.0f;
 
 		//Set center points transform.up to the launch normal.
 		//centerPointTransform.up = new Vector3(launchNormal.x, launchNormal.y, 0.0f);
@@ -172,7 +178,7 @@ public class TrampolineControllerScript : MonoBehaviour {
 
 	private IEnumerator TrampolineCooldownTimer()
 	{
-		yield return new WaitForSeconds(stretchTime);
+		yield return new WaitForSeconds(stretchTime * stretchCooldownMultiplier);
 		trampolineCooldown = false;
 	}
 	#endregion
