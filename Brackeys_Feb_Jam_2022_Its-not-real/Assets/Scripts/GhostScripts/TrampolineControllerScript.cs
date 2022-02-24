@@ -18,6 +18,10 @@ public class TrampolineControllerScript : MonoBehaviour {
 	private float stretchTime = 0.25f;
 
 	[SerializeField]
+	[Range(1.0f, 30.0f)]
+	private float stretchLength = 10.0f;
+
+	[SerializeField]
 	private Transform centerPointTransform = null;
 	#endregion
 
@@ -119,10 +123,10 @@ public class TrampolineControllerScript : MonoBehaviour {
 	private void AnimateTrampoline() {
 		if (animationTimer < (stretchTime / 2.0f)) {
 			//Move center point in the opposite direction of the launch normal.
-			centerPointTransform.position += ((-(new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f))) * 5.0f * Time.deltaTime);
+			centerPointTransform.position += ((-(new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f))) * stretchLength * Time.deltaTime);
 		} else {
 			//Move center point in the direction of the launch normal.
-			centerPointTransform.position += ((new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f)) * 5.0f * Time.deltaTime);
+			centerPointTransform.position += ((new Vector3(m_launchNormal.x, m_launchNormal.y, 0.0f)) * stretchLength * Time.deltaTime);
 		}
 
 		//Bezier Calculation.

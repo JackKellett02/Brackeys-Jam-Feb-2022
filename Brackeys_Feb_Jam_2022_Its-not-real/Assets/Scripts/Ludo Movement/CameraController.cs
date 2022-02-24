@@ -35,10 +35,6 @@ public class CameraController : MonoBehaviour
         {
             clampBool = !clampBool;
         }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            //Time.timeScale = 0.5f;
-        }
     }
 
     private void FixedUpdate()
@@ -70,7 +66,7 @@ public class CameraController : MonoBehaviour
         }
 
         //Camera follows Player position smoothly with a lerp
-        transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.timeScale);
         transform.position = new Vector3(transform.position.x, transform.position.y, -10.0f);
     }
 

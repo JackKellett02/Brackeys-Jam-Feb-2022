@@ -11,7 +11,8 @@ public class PlayerPlatformer : MonoBehaviour
 
     private float jumpTimer;
     private float groundedTimer;
-    private float stretchTimer;
+    [SerializeField]
+    private float noKeySlowdown = 0.7f;
 
     private bool ghostMode = false;
     Rigidbody2D RB;
@@ -35,7 +36,7 @@ public class PlayerPlatformer : MonoBehaviour
     void Update()
     {
         inputX = Input.GetAxisRaw("Horizontal");
-        stretchTimer -= Time.deltaTime;
+
         //Handling Jump Input Buffer values
         jumpTimer -= Time.deltaTime;
         if (Input.GetButtonDown("Jump") && canInput)
@@ -102,11 +103,11 @@ public class PlayerPlatformer : MonoBehaviour
             {
                 if (RB.velocity.x > maxSpeed)
                 {
-                    RB.velocity = new Vector2(Mathf.Lerp(RB.velocity.x, maxSpeed, 0.7f), RB.velocity.y);
+                    RB.velocity = new Vector2(Mathf.Lerp(RB.velocity.x, maxSpeed, noKeySlowdown), RB.velocity.y);
                 }
                 else if (RB.velocity.x < -maxSpeed)
                 {
-                    RB.velocity = new Vector2(Mathf.Lerp(RB.velocity.x, -maxSpeed, 0.7f), RB.velocity.y);
+                    RB.velocity = new Vector2(Mathf.Lerp(RB.velocity.x, -maxSpeed, noKeySlowdown), RB.velocity.y);
                 }
                 else
                 {
@@ -122,7 +123,7 @@ public class PlayerPlatformer : MonoBehaviour
         if (stretching)
         {
             RB.velocity = Vector2.zero;
-            transform.position = Vector3.Lerp(followLerp.position, transform.position, 0.9f);
+            transform.position = Vector3.Lerp(followLerp.position, transform.position, 0.95f);
         }
 
         
@@ -140,7 +141,6 @@ public class PlayerPlatformer : MonoBehaviour
         stretching = true;
         RB.gravityScale = 0;
         followLerp = followPoint;
-        //Debug.Log(followPoint.position);
     }
 
     IEnumerator TrampolineStretch(Vector2 launchVelocity, float stretchTime)
