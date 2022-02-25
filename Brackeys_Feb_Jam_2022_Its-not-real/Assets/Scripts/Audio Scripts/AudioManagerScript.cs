@@ -48,8 +48,6 @@ public class AudioManagerScript : MonoBehaviour {
 			}
 
 		}
-
-		PlayMusicClip("City-of-the-Disturbed_Looping", true);
 	}
 
 	// Update is called once per frame

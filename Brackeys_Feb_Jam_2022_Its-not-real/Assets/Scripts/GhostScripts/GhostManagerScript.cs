@@ -8,8 +8,15 @@ public class GhostManagerScript : MonoBehaviour {
 	private GameObject ghostModeUiTint = null;
 
 	[SerializeField]
+	private GameObject ghostGameObject = null;
+
+	[SerializeField]
 	[Range(0.0f, 1.0f)]
 	private float ghostModeTimeScale = 0.0f;
+
+	[SerializeField]
+	[Range(0.0f, 10.0f)]
+	private float minGhostDistance = 3.0f;
 
 	[SerializeField]
 	[Range(2, 20)]
@@ -23,7 +30,7 @@ public class GhostManagerScript : MonoBehaviour {
 	private static bool ghostModeActive;
 	private static float static_timeScale;
 
-
+	private GameObject playerGameObject = null;
 	private Vector3 worldPos1 = Vector3.zero;
 	private Vector3 worldPos2 = Vector3.zero;
 	#endregion
@@ -34,6 +41,7 @@ public class GhostManagerScript : MonoBehaviour {
 		lineRenderer.enabled = false;
 		ghostModeActive = false;
 		static_timeScale = ghostModeTimeScale;
+		playerGameObject = GameObject.FindGameObjectsWithTag("Player")[0];
 	}
 
 	// Update is called once per frame
@@ -43,6 +51,25 @@ public class GhostManagerScript : MonoBehaviour {
 			//Activate the tint.
 			if (ghostModeUiTint) {
 				ghostModeUiTint.SetActive(true);
+			}
+
+			//Activate the ghost and make it follow the mouse.
+			if (ghostGameObject) {
+				ghostGameObject.SetActive(true);
+
+				//Calculate new position for ghost.
+				Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				newPos = new Vector3(newPos.x, newPos.y, 0.0f);
+				Vector3 playerToMouseDir = newPos - (new Vector3(playerGameObject.transform.position.x, playerGameObject.transform.position.y, 0.0f));
+				if (playerToMouseDir.magnitude <= minGhostDistance) {
+					playerToMouseDir = playerToMouseDir.normalized;
+					newPos = new Vector3(playerGameObject.transform.position.x + playerToMouseDir.x * minGhostDistance, playerGameObject.transform.position.y + playerToMouseDir.y * minGhostDistance, 0.0f);
+				}
+
+				//Apply new pos.
+				ghostGameObject.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
+
+				//Animate Ghost.
 			}
 
 			//Let the player draw trampolines.
@@ -67,7 +94,7 @@ public class GhostManagerScript : MonoBehaviour {
 			} else if (Input.GetMouseButtonUp(0)) {
 				//Deactivate Dotted Line.
 				lineRenderer.enabled = false;
-				
+
 				//Get the second position for the trampoline.
 				worldPos2 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -81,6 +108,19 @@ public class GhostManagerScript : MonoBehaviour {
 			if (ghostModeUiTint) {
 				ghostModeUiTint.SetActive(false);
 			}
+
+			//Deactivate the ghost.
+			if (ghostGameObject) {
+				ghostGameObject.SetActive(false);
+			}
+		}
+	}
+
+	private void GhostAnimation(bool start)
+	{
+		if (start)
+		{
+
 		}
 	}
 	#endregion
