@@ -68,8 +68,6 @@ public class GhostManagerScript : MonoBehaviour {
 
 				//Apply new pos.
 				ghostGameObject.transform.position = new Vector3(newPos.x, newPos.y, 0.0f);
-
-				//Animate Ghost.
 			}
 
 			//Let the player draw trampolines.
@@ -113,14 +111,6 @@ public class GhostManagerScript : MonoBehaviour {
 			if (ghostGameObject) {
 				ghostGameObject.SetActive(false);
 			}
-		}
-	}
-
-	private void GhostAnimation(bool start)
-	{
-		if (start)
-		{
-
 		}
 	}
 	#endregion
