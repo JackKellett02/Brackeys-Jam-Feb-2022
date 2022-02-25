@@ -56,6 +56,8 @@ public class GhostManagerScript : MonoBehaviour {
 			//Activate the ghost and make it follow the mouse.
 			if (ghostGameObject) {
 				ghostGameObject.SetActive(true);
+				//Deactivate normal cursor visuals.
+				Cursor.visible = false;
 
 				//Calculate new position for ghost.
 				Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -111,6 +113,9 @@ public class GhostManagerScript : MonoBehaviour {
 			if (ghostGameObject) {
 				ghostGameObject.SetActive(false);
 			}
+
+			//Reactivate normal cursor visuals.
+			Cursor.visible = true;
 		}
 	}
 	#endregion
