@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4554625890241507393
+--- !u!1 &3280521392363470251
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4995490105593284518}
-  - component: {fileID: 1019930002928888234}
+  - component: {fileID: 3280521392363470249}
+  - component: {fileID: 3280521392363470250}
   m_Layer: 0
-  m_Name: TrampolineManager
+  m_Name: GhostManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4995490105593284518
+--- !u!4 &3280521392363470249
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4554625890241507393}
+  m_GameObject: {fileID: 3280521392363470251}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,18 +31,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1019930002928888234
+--- !u!114 &3280521392363470250
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4554625890241507393}
+  m_GameObject: {fileID: 3280521392363470251}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a149dfd4c6998b4ab33281e9403e6f7, type: 3}
+  m_Script: {fileID: 11500000, guid: 298fb0a75797ebb4b90eaef09a3bf827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trampolinePoolSize: 5
+  ghostModeUiTint: {fileID: 0}
+  ghostModeTimeScale: 0.01
   trampolineResolution: 5
-  trampolinePrefab: {fileID: 3790303053103117380, guid: 3ec9b4f0b3cca8f4c8435796c94d950d, type: 3}
+  lineRenderer: {fileID: 0}

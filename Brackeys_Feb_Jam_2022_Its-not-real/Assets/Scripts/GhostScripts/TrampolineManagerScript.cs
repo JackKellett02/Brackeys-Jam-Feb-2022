@@ -41,8 +41,9 @@ public class TrampolineManagerScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		
+
 	}
+
 	#endregion
 
 	#region Public Access Functions (Getters and Setters).
@@ -55,11 +56,11 @@ public class TrampolineManagerScript : MonoBehaviour {
 		//Get the trampoline controller.
 		TrampolineControllerScript trampController = newTrampoline.GetComponent<TrampolineControllerScript>();
 
-		//Update the trampolines points.
-		trampController.SetTrampolinePoints(a_StartPoint, a_EndPoint, numberOfPoints);
-
 		//Reactivate the trampoline.
 		newTrampoline.SetActive(true);
+
+		//Update the trampolines points.
+		trampController.SetTrampolinePoints(a_StartPoint, a_EndPoint, numberOfPoints);
 
 		//Add it back to the queue.
 		trampolinePool.Enqueue(newTrampoline);
