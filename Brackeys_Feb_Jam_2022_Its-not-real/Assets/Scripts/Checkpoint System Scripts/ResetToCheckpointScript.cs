@@ -11,6 +11,9 @@ public class ResetToCheckpointScript : MonoBehaviour {
 
 			//Move the player back to the last saved checkpoint.
 			CheckpointManagerScript.ResetToCheckpoint();
+
+			//Play a hurt sound.
+			StartCoroutine(AudioManagerScript.PlaySoundEffect("OOF", Camera.main.gameObject.transform.position));
 		}
 	}
 }
