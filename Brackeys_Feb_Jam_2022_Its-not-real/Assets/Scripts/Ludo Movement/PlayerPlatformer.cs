@@ -160,7 +160,7 @@ public class PlayerPlatformer : MonoBehaviour {
 		}
 
 		if (inputX > 0) {
-			//Rotate the spriteright.
+			//Rotate the sprite right.
 			playerAnimationGameObject.transform.right = Vector3.right;
 		}
 
@@ -170,7 +170,7 @@ public class PlayerPlatformer : MonoBehaviour {
 		Animator.SetBool("Running", false);
 		Animator.SetBool("Stretching", false);
 		Animator.SetBool("Idle", true);
-		if (inputX <= -1.0f || inputX >= 1.0f) {
+		if (inputX <= -1.0f || inputX >= 1.0f && grounded) {
 			//Player is running.
 			Animator.SetBool("JumpUp", false);
 			Animator.SetBool("JumpDown", false);
@@ -178,7 +178,7 @@ public class PlayerPlatformer : MonoBehaviour {
 			Animator.SetBool("Stretching", false);
 			Animator.SetBool("Idle", false);
 		}
-		if (RB.velocity.y > 0.25f && !grounded) {
+		if (RB.velocity.y > 0.03f) {
 			//Player is moving up.
 			Animator.SetBool("JumpUp", true);
 			Animator.SetBool("JumpDown", false);
@@ -186,7 +186,7 @@ public class PlayerPlatformer : MonoBehaviour {
 			Animator.SetBool("Stretching", false);
 			Animator.SetBool("Idle", false);
 		}
-		if (RB.velocity.y < 0.25f && !grounded) {
+		if (RB.velocity.y < -0.03f) {
 			//Player is moving down.
 			Animator.SetBool("JumpUp", false);
 			Animator.SetBool("JumpDown", true);
