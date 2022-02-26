@@ -178,7 +178,7 @@ public class PlayerPlatformer : MonoBehaviour {
 			Animator.SetBool("Stretching", false);
 			Animator.SetBool("Idle", false);
 		}
-		if (RB.velocity.y > 0.25f && !grounded) {
+		if (RB.velocity.y > 0.0f && !grounded) {
 			//Player is moving up.
 			Animator.SetBool("JumpUp", true);
 			Animator.SetBool("JumpDown", false);
@@ -186,7 +186,7 @@ public class PlayerPlatformer : MonoBehaviour {
 			Animator.SetBool("Stretching", false);
 			Animator.SetBool("Idle", false);
 		}
-		if (RB.velocity.y < 0.25f && !grounded) {
+		if (RB.velocity.y < 0.0f && !grounded) {
 			//Player is moving down.
 			Animator.SetBool("JumpUp", false);
 			Animator.SetBool("JumpDown", true);
