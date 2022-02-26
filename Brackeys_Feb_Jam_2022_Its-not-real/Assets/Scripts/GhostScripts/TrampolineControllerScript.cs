@@ -78,6 +78,8 @@ public class TrampolineControllerScript : MonoBehaviour {
 				AnimateTrampoline();
 				UpdateLinePoints();
 			} else if (animationTimer >= stretchTime) {
+				//Play the swoosh sound at the position of the trampoline.
+				StartCoroutine(AudioManagerScript.PlaySoundEffect("ArrowSwoosh", this.gameObject.transform.position));
 				trampolineAnimating = false;
 				trampolineCooldown = true;
 				StartCoroutine("TrampolineCooldownTimer");
@@ -136,9 +138,6 @@ public class TrampolineControllerScript : MonoBehaviour {
 		trampolineAnimating = true;
 		m_launchNormal = launchNormal;
 		animationTimer = 0.0f;
-
-		//Set center points transform.up to the launch normal.
-		//centerPointTransform.up = new Vector3(launchNormal.x, launchNormal.y, 0.0f);
 	}
 
 	private void AnimateTrampoline() {
@@ -196,8 +195,7 @@ public class TrampolineControllerScript : MonoBehaviour {
 		trampolineCooldown = false;
 	}
 
-	private IEnumerator TrampolineLifeSpan()
-	{
+	private IEnumerator TrampolineLifeSpan() {
 		yield return new WaitForSeconds(trampolineLifetime);
 		this.gameObject.SetActive(false);
 	}

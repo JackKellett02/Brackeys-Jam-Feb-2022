@@ -54,3 +54,5 @@ MonoBehaviour:
     bMusicClip: 1
   - audioClip: {fileID: 8300000, guid: 152a95df95547a14c9b20d32ca3105bd, type: 3}
     bMusicClip: 1
+  - audioClip: {fileID: 8300000, guid: 4e989ee156aa1fd439a7a3cd4c40c04e, type: 3}
+    bMusicClip: 0
