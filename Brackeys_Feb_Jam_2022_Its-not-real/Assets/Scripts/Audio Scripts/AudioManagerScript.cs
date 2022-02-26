@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManagerScript : MonoBehaviour {
 	#region Variables to assign via the unity inspector (SerializeFields).
@@ -68,12 +69,14 @@ public class AudioManagerScript : MonoBehaviour {
 	{
 		//Find the audio clip with the specified name.
 		AudioClip audioClip = null;
+		float volume = 0.0f;
 		for (int i = 0; i < staticSoundEffectFiles.Count; i++)
 		{
 			//If the name matches and it's not a music clip.
 			if (staticSoundEffectFiles[i].audioClip.name == name)
 			{
 				audioClip = staticSoundEffectFiles[i].audioClip;
+				volume = staticSoundEffectFiles[i].volume;
 				break;
 			}
 		}
@@ -81,6 +84,9 @@ public class AudioManagerScript : MonoBehaviour {
 		//Get an audio source object.
 		GameObject audioSoureGameObject = audioSourcePool.SpawnObject();
 		AudioSource audioSource = audioSoureGameObject.GetComponent<AudioSource>();
+
+		//Change the volume to the correctly volume for the clip.
+		audioSource.volume = volume;
 
 		//Move it to the specified location.
 		audioSoureGameObject.transform.position = a_position;
@@ -118,13 +124,18 @@ public class AudioManagerScript : MonoBehaviour {
 
 		//Find the audio clip with the specified name.
 		AudioClip audioClip = null;
+		float volume = 0.0f;
 		for (int i = 0; i < staticMusicFiles.Count; i++) {
 			//If the name matches and it's not a music clip.
 			if (staticMusicFiles[i].audioClip.name == a_name) {
 				audioClip = staticMusicFiles[i].audioClip;
+				volume = staticMusicFiles[i].volume;
 				break;
 			}
 		}
+
+		//Set the music volume to the correct value.
+		audioSource.volume = volume;
 
 		//Get the length of the audio clip.
 		float clipLength = 0.5f;

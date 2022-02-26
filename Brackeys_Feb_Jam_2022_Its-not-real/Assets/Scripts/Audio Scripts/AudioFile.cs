@@ -10,14 +10,15 @@ using UnityEngine;
 public class AudioFile {
 	#region Class Variables
 	public AudioClip audioClip = null;
-
 	public bool bMusicClip = false;
+
+	[Range(0.0f, 1.0f)]
+	public float volume = 1.0f;
 	#endregion
 
 	#region Class Public Functions.
 	//Constructor.
-	public AudioFile()
-	{
+	public AudioFile() {
 
 	}
 	#endregion
